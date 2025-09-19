@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "382895500621",
+    "project_id": "aussieexperts-e2987",
+    "storage_bucket": "aussieexperts-e2987.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382895500621:android:6ea33510ede30f81d1db04",
+        "android_client_info": {
+          "package_name": "com.aussie.aussieexperts"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADT0_HGxnCeU3Tll117EuAVPXDAVmtAYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382895500621:android:8a24ae239b1dd262d1db04",
+        "android_client_info": {
+          "package_name": "com.aussieexpert.aussie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADT0_HGxnCeU3Tll117EuAVPXDAVmtAYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
