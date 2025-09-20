@@ -47,7 +47,6 @@ import com.aussie.aussieexperts.presentation.widgets.StoriesRow
 
 @Composable
 fun HomeFeed(
-    modifier: Modifier = Modifier,
     storyViewModel: StoryViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     postViewModel: PostViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onStoryClick: (Story) -> Unit = {},
@@ -80,7 +79,6 @@ fun HomeFeed(
 
 
     LazyColumn(
-        modifier = modifier.background(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)),
         state = listState,
     ) {
         // What's on your mind card at top

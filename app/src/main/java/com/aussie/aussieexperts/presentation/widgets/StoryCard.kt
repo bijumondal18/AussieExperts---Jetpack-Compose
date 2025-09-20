@@ -53,7 +53,7 @@ fun StoryCard(
         modifier = Modifier
             .width(130.dp)
             .height(220.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onStoryClick(story) }
     ) {
         // Story background image

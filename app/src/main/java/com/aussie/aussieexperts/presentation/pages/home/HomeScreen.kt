@@ -1,6 +1,8 @@
 package com.aussie.aussieexperts.presentation.pages.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,36 +34,17 @@ import com.aussie.aussieexperts.presentation.widgets.StoriesRow
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
 
-    BaseScaffold(
-        title = "Aussie Experts",
-        showBack = false,
-        actions = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = 16.dp),
-            ) {
-                BaseIconButton(
-                    icon = Icons.Default.UploadFile,
-                    contentDescription = "Upload Files",
-                    modifier = Modifier,
-                    onClick = {
-                        println("Upload Files")
-                    }
-                )
-                Text(
-                    text = "Upload Files",
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
-        },
-        content = {
-            HomeFeed(
-                modifier = Modifier.fillMaxSize().padding(it),
-                onStoryClick = { println("Clicked story: ${it.senderName}") },
-                onPostClick = { println("Liked post: ${it.senderName}") },
-                onPostLikeClick = { println("Liked post: ${it.senderName}") },
-                onPostCommentClick = { println("Comment on post: ${it.senderName}") }
-            )
-        }
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
+
+    ) {
+        HomeFeed(
+            onStoryClick = { println("Clicked story: ${it.senderName}") },
+            onPostClick = { println("Liked post: ${it.senderName}") },
+            onPostLikeClick = { println("Liked post: ${it.senderName}") },
+            onPostCommentClick = { println("Comment on post: ${it.senderName}") }
+        )
+    }
 }
