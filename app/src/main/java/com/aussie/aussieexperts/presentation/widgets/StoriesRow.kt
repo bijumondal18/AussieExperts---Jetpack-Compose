@@ -4,12 +4,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,76 +39,46 @@ fun StoriesRow(
 ) {
 
     val stories by viewModel.stories.collectAsState()
+    val listState = rememberLazyListState()
+
+
+    // Load initial page
+    LaunchedEffect(Unit) {
+        viewModel.fetchStories()
+    }
+
+    // Detect when reaching near end of list
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex + listState.layoutInfo.visibleItemsInfo.size }
+            .collect { visible ->
+                if (visible >= stories.size - 2) { // near end
+                    viewModel.fetchStories()
+                }
+            }
+    }
+
+
 
     LazyRow(
         modifier = modifier.fillMaxWidth(),
+        state = listState,
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        when{
-            isLoading ->{
-                items(5){
+
+        when {
+            isLoading -> {
+                items(5) {
                     StoryShimmerItem()
                 }
             }
+
             stories.isNotEmpty() -> {
-                items(stories) { story ->
-                    Box(
-                        modifier = Modifier
-                            .width(130.dp)
-                            .height(220.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .clickable { onStoryClick(story) }
-                    ) {
-                        // Story background image
-                        SubcomposeAsyncImage (
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(story.image)
-                                .crossfade(true)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .diskCachePolicy(CachePolicy.ENABLED)
-                                .build(),
-                            contentDescription = "Story Image",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(16.dp)),
-                            contentScale = ContentScale.Crop,
-                            loading = {
-                                Box(
-                                    modifier = Modifier
-                                        .matchParentSize()
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .shimmerLoading()
-                                )
-                            }
-                        )
-
-                        // Profile avatar (top-left)
-                        BaseCircleAvatar(
-                            imageUrl = story.senderImage,
-                            initials = story.initials,
-                            size = 36.dp,
-                            borderWidth = 2.dp,
-                            borderColor = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(8.dp),
-                            onClick = { onStoryClick(story) }
-                        )
-
-                        // Username (bottom-left)
-                        Text(
-                            text = story.senderName,
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                color = Color.White,
-                                fontWeight = FontWeight.Medium
-                            ),
-                            maxLines = 2,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(8.dp)
-                        )
-                    }
+                items(
+                    items = stories,
+                    key = { story -> story.id }
+                ) { story ->
+                    StoryCard(story = story, onStoryClick = onStoryClick)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.aussie.aussieexperts.presentation.view_models
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aussie.aussieexperts.data.Story
@@ -15,14 +16,35 @@ class StoryViewModel(
     private val _stories = MutableStateFlow<List<Story>>(emptyList())
     val stories: StateFlow<List<Story>> = _stories
 
-    init {
-        fetchStories()
-    }
+    private var isLoading = false
+    private var hasMore = true
 
-    fun fetchStories() {
+
+    fun fetchStories(limit: Long = 10) {
+        if (isLoading || !hasMore) return
+
         viewModelScope.launch {
-            val result = repository.getStories()
-            _stories.value = result
+            isLoading = true
+            val newStories = repository.getStories(limit)
+
+            newStories.forEach { story ->
+                Log.d("StoryViewModel", "Fetched story: ${story.id}, image=${story.image}")
+            }
+
+            if (newStories.isEmpty()) {
+                hasMore = false
+            } else {
+                _stories.value = _stories.value + newStories
+            }
+            isLoading = false
         }
     }
+
+    fun refreshStories(limit: Long = 10) {
+        repository.resetPagination()
+        _stories.value = emptyList()
+        hasMore = true
+        fetchStories(limit)
+    }
+
 }

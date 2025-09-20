@@ -60,12 +60,12 @@ fun HomeFeed(
     LazyColumn(
         modifier = modifier.background(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
     ) {
-        // What's on your mind card
+        // What's on your mind card at top
         item {
             CreatePostCard()
         }
 
-        // Stories Row at top
+        // Stories Row in the middle
         item {
             Spacer(modifier = Modifier.height(16.dp))
             StoriesRow(onStoryClick = onStoryClick, isLoading = stories.isEmpty())

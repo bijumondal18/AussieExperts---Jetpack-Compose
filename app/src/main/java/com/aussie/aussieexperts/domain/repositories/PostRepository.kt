@@ -13,6 +13,7 @@ class PostRepository(
     suspend fun getPosts(): List<Post> {
         return try {
             val snapshot = firestore.collection("post")
+                .orderBy("sent", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .await()
             snapshot.documents.mapNotNull { doc ->
