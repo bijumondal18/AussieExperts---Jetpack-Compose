@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
@@ -40,15 +42,15 @@ fun PostCard(
     onPostClick: (Post) -> Unit = {},
     onCommentClick: (Post) -> Unit = {}
 ) {
-    Box (
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(color = MaterialTheme.colorScheme.background)
             .clickable { onPostClick(post) }
             .navigationBarsPadding()
-    ){
+    ) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -62,7 +64,7 @@ fun PostCard(
                 BaseCircleAvatar(
                     imageUrl = post.senderImage,
                     initials = post.initials,
-                    size = 40.dp
+                    size = 36.dp
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(
@@ -71,7 +73,7 @@ fun PostCard(
                 ) {
                     Text(
                         text = post.senderName,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
                     )
                     Text(
                         text = DateTimeUtils.formatTimestamp(post.sent.toLong()),
@@ -80,7 +82,17 @@ fun PostCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+
+            // Caption
+            if (post.text.isNotBlank()) {
+                Text(
+                    text = post.text,
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
+                )
+            }
 
             // Post image
             SubcomposeAsyncImage(
@@ -93,7 +105,7 @@ fun PostCard(
                 contentDescription = "Post Image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
+                    .padding(if (post.text.isNotBlank()) 0.dp else 12.dp)
                     .clip(shape = RoundedCornerShape(12.dp))
                     .height(300.dp),
                 contentScale = ContentScale.Crop,
@@ -129,15 +141,6 @@ fun PostCard(
                         modifier = Modifier.clickable { onCommentClick(post) }
                     )
                 }
-            }
-
-            // Caption
-            if (!post.text.isNullOrBlank()) {
-                Text(
-                    text = post.text,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
-                )
             }
 
         }

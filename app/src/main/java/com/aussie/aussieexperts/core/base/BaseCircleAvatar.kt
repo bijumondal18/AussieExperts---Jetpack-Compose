@@ -29,7 +29,7 @@ fun BaseCircleAvatar(
     imageUrl: String? = null,
     painter: Painter? = null,                // optional custom painter (local resource)
     initials: String? = null,                // fallback initials (e.g., "AB")
-    size: Dp = 48.dp,
+    size: Dp = 36.dp,
     borderWidth: Dp = 0.dp,
     borderColor: Color = Color.Transparent,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,

@@ -88,7 +88,6 @@ fun HomeFeed(
 
         // Stories Row in the middle
         item {
-            Spacer(modifier = Modifier.height(16.dp))
             StoriesRow(onStoryClick = onStoryClick, isLoading = stories.isEmpty())
         }
 
