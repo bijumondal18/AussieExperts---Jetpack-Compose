@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +41,7 @@ import com.aussie.aussieexperts.presentation.view_models.PostViewModel
 import com.aussie.aussieexperts.presentation.view_models.StoryViewModel
 import com.aussie.aussieexperts.presentation.widgets.CreatePostCard
 import com.aussie.aussieexperts.presentation.widgets.PostCard
+import com.aussie.aussieexperts.presentation.widgets.PostShimmerItem
 import com.aussie.aussieexperts.presentation.widgets.PostsColumn
 import com.aussie.aussieexperts.presentation.widgets.StoriesRow
 
@@ -55,10 +58,30 @@ fun HomeFeed(
 
     val stories by storyViewModel.stories.collectAsState()
     val posts by postViewModel.posts.collectAsState()
+    val listState = rememberLazyListState()
+
+
+    // Load first page
+    LaunchedEffect(Unit) {
+        postViewModel.fetchPosts()
+    }
+
+
+    // Detect scroll to end
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex + listState.layoutInfo.visibleItemsInfo.size }
+            .collect { visible ->
+                if (visible >= posts.size - 2) {
+                    postViewModel.fetchPosts()
+                }
+            }
+    }
+
 
 
     LazyColumn(
-        modifier = modifier.background(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
+        modifier = modifier.background(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)),
+        state = listState,
     ) {
         // What's on your mind card at top
         item {
@@ -72,9 +95,15 @@ fun HomeFeed(
         }
 
         // Posts below
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            PostsColumn { onPostClick(it) }
+        items(posts) { post ->
+            PostCard(post = post, onPostClick = onPostClick)
+        }
+
+        // Loading shimmer at bottom
+        if (posts.isEmpty()) {
+            items(5) {
+                PostShimmerItem()
+            }
         }
     }
 }
